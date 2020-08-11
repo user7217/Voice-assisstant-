@@ -1,0 +1,152 @@
+import datetime
+import random
+import webbrowser as browser
+import speech_recognition as sr
+from gtts import gTTS
+from playsound import playsound
+import os
+import sys
+import subprocess
+
+BOTNAME = 'Blabot'
+
+r = sr.Recognizer()
+r.dynamic_energy_threshold = False
+def speak(text):
+    output = gTTS(text=text, lang='en-GB', slow=False)
+    output.save('cache.mp3')
+    playsound('cache.mp3')
+    os.remove('cache.mp3')
+
+ft = True
+listen = True
+speak('Initializing...')
+
+def time():
+    dt = datetime.datetime.now()
+    hour = dt.hour
+    minute = dt.minute
+    if hour <12:
+        hour = str(hour)
+        minute = str(minute)
+        time = hour+' '+minute+' A M'
+    else:
+        hour = int(hour)
+        hour = hour-12
+        hour = str(hour)
+        minute = str(minute)
+        time = hour+' '+minute+' P M'
+    return time
+
+def greet():
+    dt = datetime.datetime.now()
+    hour  = dt.hour
+    hour = int(hour)
+    if hour < 12:
+        reply_list = ['Good morning ',
+                      'Good morning , the time is '+time(),
+                      'Good morning , hope you are doing well',
+                      'Hello , Nice to see you'
+                      ]
+        return random.choice(reply_list)
+    elif hour > 12 and hour < 16:
+        reply_list = ['Good afternoon , the time is '+time(),
+                      'Good afternoon , hope you are doing well',
+                      'Hello , Nice to see you'
+                      ]
+        return random.choice(reply_list)
+    else:
+        reply_list = ['Good evening ',
+                      'Good evening , the time is '+time(),
+                      'Good evening , hope you are doing well',
+                      'Hello , Nice to see you'
+                      ]
+        return random.choice(reply_list)
+
+def close():
+    hour = datetime.datetime.now().hour
+    hour = int(hour)
+    if hour < 12:
+        reply_list = ['Have a great day . You can always say "start listening"',
+                      'Have a nice day . You can say "start listening" to wake me up'
+                      ]
+        return random.choice(reply_list)
+    elif hour > 12 and hour < 16:
+        reply_list = ['Have a great day . You can always say "start listening"',
+                      'Have a nice day . You can say "start listening" to wake me up'
+                      ]
+        return random.choice(reply_list)
+    elif hour > 16 and hour < 20:
+        reply_list = ['Have a great evening . You can always say "start listening"',
+                      'Have a nice evening . You can say "start listening" to wake me up'
+                      ]
+        return random.choice(reply_list)
+    else:
+        reply_list = ['Good night . You can always say "start listening"',
+                      'Sweet dreams . You can say "start listening" to wake me up'
+                      ]
+        return random.choice(reply_list)
+
+def tell_time():
+    c_time = time()
+    reply_list = ['The current time is '+c_time,
+                  'The current desktop time is '+c_time,
+                  'The time is '+c_time,
+                  'The time now is '+c_time
+                  ]
+    return random.choice(reply_list)
+
+def thanks():
+    reply_list = ['My pleasure',
+                  'Always ready to help',
+                  'No problems',
+                  'I am here to help you'
+                  ]
+    return random.choice(reply_list)
+
+def handler(text):
+    if text == 'lol':
+        return 'I lol, u lol, all lol'
+    elif text == 'open youtube':
+        browser.open('https://youtube.com')
+        return 'Opening youtube'
+    elif text == 'open hangouts':
+        browser.open('https://hangouts.google.com/')
+        return 'opening hangouts'
+    elif text == 'open techspot':
+        browser.open('https://www.techspot.com/')
+        return 'Opening TechSpot'
+    elif text == 'open gmail':
+        browser.open('https://gmail.com')
+        return 'Opening Gmail'
+    elif text == 'open arduino':
+        subprocess.call(['C:\\Program Files (x86)\\Arduino\\arduino.exe'])
+        return 'Opening Arduino I D E'
+    elif text[:5] == 'open ':
+        app = text[5:]
+        if app == 'notepad':
+            os.system('notepad')
+            return 'Opening notepad'
+        elif app == 'calc' or app == 'calculator':
+            os.system('calc')
+            return 'Opening calculator'
+
+
+while 1:
+    with sr.Microphone() as source:
+        if ft:
+            speak(greet())
+            ft = False
+        try:
+            audio = r.listen(source, timeout=2)
+            try:
+                text = r.recognize_google(audio)
+                text = text.lower()
+                print('You: '+text)
+                reply_text = handler(text)
+                print(BOTNAME+': '+reply_text)
+                speak(reply_text)
+            except:
+                pass
+        except:
+            pass
