@@ -8,7 +8,7 @@ import os
 import sys
 import subprocess
 
-BOTNAME = 'Blabot'
+BOTNAME = 'bot'
 
 r = sr.Recognizer()
 r.dynamic_energy_threshold = False
@@ -105,8 +105,6 @@ def thanks():
     return random.choice(reply_list)
 
 def handler(text):
-    if text == 'lol':
-        return 'I lol, u lol, all lol'
     elif text == 'open youtube':
         browser.open('https://youtube.com')
         return 'Opening youtube'
